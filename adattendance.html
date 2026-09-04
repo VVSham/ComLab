@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Attendance Management</title>
+  <script>
+    // Check if user is logged in
+    if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+      window.location.href = 'adlogin.html';
+    }
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #e7e9ed;
+      color: #202124;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+      padding: 14px 28px;
+      border-bottom: 1px solid #c9cdd3;
+    }
+
+    .breadcrumb {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .breadcrumb a {
+      color: #217346;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: #1e5a3d;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #217346;
+      color: white;
+      text-decoration: none;
+      border-radius: 3px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #1e5a3d;
+    }
+
+    .container {
+      padding: 24px 28px 12px;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #202124;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #5f6368;
+      margin-bottom: 18px;
+    }
+
+    .controls-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      padding: 9px 12px;
+      border: 1px solid #aeb4bb;
+      border-radius: 2px;
+      font-size: 14px;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #217346;
+      box-shadow: inset 0 0 0 1px #217346;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 9px 13px;
+      border: 1px solid #aeb4bb;
+      border-radius: 2px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #217346;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #185c37;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #202124;
+    }
+
+    .btn-secondary:hover {
+      background: #f1f3f4;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      background: white;
+      border: 1px solid #aeb4bb;
+      box-shadow: 0 1px 2px rgba(32, 33, 36, 0.12);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #f1f3f4;
+      color: #202124;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    th {
+      padding: 9px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      border-right: 1px solid #c9cdd3;
+      border-bottom: 1px solid #aeb4bb;
+    }
+
+    th:last-child {
+      border-right: none;
+    }
+
+    td {
+      padding: 9px 12px;
+      border-right: 1px solid #d9dce1;
+      border-bottom: 1px solid #d9dce1;
+      font-size: 14px;
+    }
+
+    tbody tr {
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #eaf2f8;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #ffffff;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-present {
+      background: rgba(45, 112, 82, 0.1);
+      color: #2d7052;
+    }
+
+    .status-absent {
+      background: rgba(220, 100, 100, 0.1);
+      color: #dc6464;
+    }
+
+    .status-late {
+      background: rgba(255, 152, 0, 0.1);
+      color: #f98800;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-edit {
+      background: #4a90e2;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background: #357abd;
+    }
+
+    .btn-delete {
+      background: #dc6464;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #c53d3d;
+    }
+
+    .btn-approve {
+      background: #2d7052;
+      color: white;
+    }
+
+    .btn-approve:hover {
+      background: #1e5a3d;
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 12px 16px;
+      border: 1px solid #c9cdd3;
+      border-radius: 2px;
+      box-shadow: none;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #8b7d6b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      color: #217346;
+      font-weight: 700;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .section-heading {
+      padding: 8px 12px;
+      background: #dfeee5;
+      color: #185c37;
+      font-weight: 700;
+      border-bottom: 1px solid #b8d5c2;
+      text-align: left;
+    }
+
+    .spreadsheet-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 34px;
+      padding: 5px 10px;
+      background: #f8f9fa;
+      border: 1px solid #aeb4bb;
+      border-bottom: 0;
+      color: #5f6368;
+      font-size: 13px;
+    }
+
+    .sheet-name {
+      color: #217346;
+      font-weight: 700;
+    }
+
+    .formula-bar {
+      flex: 1;
+      padding: 5px 8px;
+      background: white;
+      border: 1px solid #c9cdd3;
+      color: #80868b;
+    }
+
+    .row-number {
+      width: 42px;
+      color: #5f6368;
+      background: #f1f3f4;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .sheet-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 34px;
+      padding: 4px 10px;
+      background: #f8f9fa;
+      border: 1px solid #aeb4bb;
+      border-top: 0;
+      color: #5f6368;
+      font-size: 13px;
+    }
+
+    .sheet-tab {
+      padding: 6px 18px;
+      background: white;
+      border: 1px solid #aeb4bb;
+      border-bottom: 2px solid #217346;
+      color: #217346;
+      font-weight: 600;
+    }
+
+    .page-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-btn {
+      padding: 4px 9px;
+      border: 1px solid #aeb4bb;
+      background: white;
+      color: #202124;
+      cursor: pointer;
+    }
+
+    .page-btn:disabled {
+      color: #9aa0a6;
+      cursor: default;
+    }
+
+    select {
+      padding: 10px 12px;
+      border: 2px solid #e8dcc8;
+      border-radius: 8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      background: white;
+      color: #333;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #2d7052;
+      background: #faf6f0;
+    }
+
+    input[type="date"] {
+      padding: 10px 12px;
+      border: 2px solid #e8dcc8;
+      border-radius: 8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      background: white;
+      color: #333;
+    }
+
+    input[type="date"]:focus {
+      outline: none;
+      border-color: #2d7052;
+      background: #faf6f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="Opening.html">Home</a> &gt;
+      <a href="Choose.html">Role Selection</a> &gt;
+      <span>Admin - Attendance Management</span>
+    </div>
+    <a href="Choose.html" class="back-btn">← Go Back</a>
+  </div>
+
+  <div class="container">
+    <h1>📋 Attendance Management</h1>
+    <p class="subtitle">Review submitted attendance records organized by grade and section</p>
+
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-label">Total Records</div>
+        <div class="stat-value" id="totalRecords">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Present Today</div>
+        <div class="stat-value" id="presentToday">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Absent</div>
+        <div class="stat-value">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Late</div>
+        <div class="stat-value">0</div>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <input type="text" class="search-box" id="searchInput" placeholder="🔍 Search by name, grade, section, or class...">
+      <div class="btn-group">
+        <button class="btn btn-primary">➕ Add Record</button>
+        <button class="btn btn-secondary">📥 Import</button>
+        <button class="btn btn-secondary">📤 Export</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <select>
+        <option>All Status</option>
+        <option>Present</option>
+        <option>Absent</option>
+        <option>Late</option>
+      </select>
+      <input type="date">
+      <select id="sectionFilter">
+        <option value="">All Sections</option>
+      </select>
+    </div>
+
+    <div class="spreadsheet-toolbar">
+      <span class="sheet-name">Attendance Register</span>
+      <span class="formula-bar">Ready</span>
+      <span>All changes saved</span>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="row-number">#</th>
+            <th>Name</th>
+            <th>Grade</th>
+            <th>Section</th>
+            <th>Class</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="attendanceTableBody"></tbody>
+      </table>
+    </div>
+    <div class="sheet-footer">
+      <span class="sheet-tab">Attendance</span>
+      <div class="page-controls">
+        <span id="pageSummary">Page 1 of 1</span>
+        <button class="page-btn" id="previousPage" type="button">&lt;</button>
+        <button class="page-btn" id="nextPage" type="button">&gt;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="idle-overlay" id="idleOverlay">
+    <div class="idle-popup">
+      <p>Are you still there?</p>
+      <p class="countdown" id="idleCountdown">Going back to Loading Screen in 30</p>
+      <div class="idle-actions">
+        <button class="idle-btn" id="idleYesBtn">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const idleOverlay = document.getElementById('idleOverlay');
+    const idleYesBtn = document.getElementById('idleYesBtn');
+    const idleCountdown = document.getElementById('idleCountdown');
+    const idleMs = 30000;
+    const redirectSeconds = 30;
+    let idleTimer;
+    let redirectTimer;
+    let countdownTimer;
+    let secondsLeft = redirectSeconds;
+
+    const attendanceStorageKey = 'attendanceRecords';
+    const tableBody = document.getElementById('attendanceTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const sectionFilter = document.getElementById('sectionFilter');
+    const previousPage = document.getElementById('previousPage');
+    const nextPage = document.getElementById('nextPage');
+    const pageSummary = document.getElementById('pageSummary');
+    const subjectNames = {
+      ap: 'AP',
+      eng: 'English',
+      fil: 'Filipino',
+      ict: 'ICT',
+      math: 'Math',
+      mapeh: 'MAPEH',
+      pe: 'PE',
+      sci: 'Science',
+      ss: 'Social Studies',
+      tle: 'TLE'
+    };
+
+    function capitalizeWords(value) {
+      return value.toLowerCase().replace(/[A-Za-z]+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1));
+    }
+
+    function normalizeName(value) {
+      const name = value.trim().replace(/\.+/g, '.').replace(/\s+/g, ' ');
+      const nameParts = name.includes(',')
+        ? [name.slice(name.indexOf(',') + 1).trim(), name.slice(0, name.indexOf(','))]
+        : [name];
+      return capitalizeWords(nameParts.join(' ')).replace(/\b([A-Za-z])\.?(?=\s|$)/g, '$1.').toUpperCase();
+    }
+
+    function normalizeSubject(value) {
+      const normalized = value.trim().replace(/\s+/g, ' ').toLowerCase();
+      return normalized.split(' ').map((word) => subjectNames[word] || capitalizeWords(word)).join(' ').toUpperCase();
+    }
+
+    function normalizeRecord(record) {
+      return {
+        ...record,
+        name: normalizeName(record.name),
+        studentName: record.studentName ? normalizeName(record.studentName) : '',
+        studentGrade: record.studentGrade ? capitalizeWords(record.studentGrade.trim().replace(/\s+/g, ' ')).toUpperCase() : '',
+        reason: record.reason ? record.reason.trim().replace(/\s+/g, ' ').toUpperCase() : '',
+        grade: capitalizeWords(record.grade.trim().replace(/\s+/g, ' ')).toUpperCase(),
+        section: (record.section || '').trim().replace(/\s+/g, ' ').toUpperCase(),
+        className: normalizeSubject(record.className)
+      };
+    }
+
+    let records = JSON.parse(localStorage.getItem(attendanceStorageKey) || '[]').map(normalizeRecord);
+    localStorage.setItem(attendanceStorageKey, JSON.stringify(records));
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[character]));
+    }
+
+    function renderAttendance() {
+      const searchTerm = searchInput.value.trim().toLowerCase();
+      const selectedSection = sectionFilter.value;
+      const filteredRecords = records.filter((record) => {
+        const matchesSearch = [record.name, record.studentName, record.studentGrade, record.reason, record.grade, record.section, record.className]
+          .some((value) => value.toLowerCase().includes(searchTerm));
+        return matchesSearch && (!selectedSection || record.section === selectedSection);
+      });
+      const totalPages = Math.max(1, Math.ceil(filteredRecords.length / rowsPerPage));
+      currentPage = Math.min(currentPage, totalPages);
+      const pageRecords = filteredRecords.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+      const groups = pageRecords.reduce((groupedRecords, record) => {
+        const groupName = record.section ? `${record.grade} - Section ${record.section}` : record.grade;
+        (groupedRecords[groupName] ||= []).push(record);
+        return groupedRecords;
+      }, {});
+      tableBody.innerHTML = Object.entries(groups).sort(([first], [second]) => first.localeCompare(second))
+        .map(([groupName, groupRecords]) => `
+          <tr><td class="section-heading" colspan="9">${escapeHtml(groupName)} (${groupRecords.length})</td></tr>
+          ${groupRecords.map((record) => `
+            <tr>
+              <td class="row-number">${filteredRecords.indexOf(record) + 1}</td>
+              <td>${escapeHtml(record.name)}${record.studentName ? `<br><small>STUDENT: ${escapeHtml(record.studentName)}${record.studentGrade ? ` (${escapeHtml(record.studentGrade)})` : ''}</small>` : ''}</td>
+              <td>${escapeHtml(record.grade)}</td>
+              <td>${escapeHtml(record.section)}</td>
+              <td>${escapeHtml(record.reason || record.className)}</td>
+              <td>${escapeHtml(record.date)}</td>
+              <td>${escapeHtml(record.time)}</td>
+              <td><span class="status-badge status-present">✓ ${escapeHtml(record.status)}</span></td>
+              <td><button class="action-btn btn-delete" data-id="${escapeHtml(record.id)}">Delete</button></td>
+            </tr>`).join('')}`).join('') || '<tr><td colspan="9">No attendance submissions found.</td></tr>';
+      document.getElementById('totalRecords').textContent = records.length;
+      document.getElementById('presentToday').textContent = records.filter((record) => record.date === new Date().toISOString().slice(0, 10)).length;
+          pageSummary.textContent = `Page ${currentPage} of ${totalPages}`;
+          previousPage.disabled = currentPage === 1;
+          nextPage.disabled = currentPage === totalPages;
+    }
+
+    [...new Set(records.map((record) => record.section))].sort().forEach((section) => {
+      sectionFilter.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(section)}">${escapeHtml(section)}</option>`);
+    });
+    searchInput.addEventListener('input', () => {
+      currentPage = 1;
+      renderAttendance();
+    });
+    sectionFilter.addEventListener('change', () => {
+      currentPage = 1;
+      renderAttendance();
+    });
+    previousPage.addEventListener('click', () => {
+      currentPage -= 1;
+      renderAttendance();
+    });
+    nextPage.addEventListener('click', () => {
+      currentPage += 1;
+      renderAttendance();
+    });
+    tableBody.addEventListener('click', (event) => {
+      if (!event.target.matches('[data-id]')) return;
+      records = records.filter((record) => record.id !== event.target.dataset.id);
+      localStorage.setItem(attendanceStorageKey, JSON.stringify(records));
+      renderAttendance();
+    });
+    renderAttendance();
+
+    function resetIdleTimers() {
+      clearTimeout(idleTimer);
+      clearTimeout(redirectTimer);
+      clearInterval(countdownTimer);
+      idleOverlay.style.display = 'none';
+      secondsLeft = redirectSeconds;
+      idleCountdown.textContent = `Going back to Loading Screen in ${secondsLeft}`;
+      idleTimer = setTimeout(() => {
+        idleOverlay.style.display = 'flex';
+        startCountdown();
+      }, idleMs);
+      redirectTimer = setTimeout(() => {
+        window.location.href = 'Opening.html';
+      }, idleMs + redirectSeconds * 1000);
+    }
+
+    function startCountdown() {
+      countdownTimer = setInterval(() => {
+        secondsLeft -= 1;
+        if (secondsLeft <= 0) {
+          clearInterval(countdownTimer);
+          secondsLeft = 0;
+        }
+        idleCountdown.textContent = `Going back to Loading Screen in ${secondsLeft}`;
+      }, 1000);
+    }
+
+    function dismissPopup() {
+      idleOverlay.style.display = 'none';
+      clearInterval(countdownTimer);
+      resetIdleTimers();
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach((eventName) => {
+      document.addEventListener(eventName, resetIdleTimers, { passive: true });
+    });
+
+    idleYesBtn.addEventListener('click', dismissPopup);
+    resetIdleTimers();
+  </script>
+</body>
+</html>

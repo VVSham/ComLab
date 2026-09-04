@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Borrow Management</title>
+  <script>
+    // Check if user is logged in
+    if (sessionStorage.getItem('adminLoggedIn') !== 'true') {
+      window.location.href = 'adlogin.html';
+    }
+  </script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5ede0;
+      color: #333;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(6px);
+      padding: 20px 60px;
+      border-bottom: 2px solid #e8dcc8;
+    }
+
+    .breadcrumb {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .breadcrumb a {
+      color: #2d7052;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .breadcrumb a:hover {
+      color: #1e5a3d;
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      background: #2d7052;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #1e5a3d;
+    }
+
+    .container {
+      padding: 40px 60px;
+    }
+
+    h1 {
+      font-size: 32px;
+      color: #2d7052;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #8b7d6b;
+      margin-bottom: 30px;
+    }
+
+    .controls-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      padding: 10px 16px;
+      border: 2px solid #e8dcc8;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+    }
+
+    .search-box:focus {
+      outline: none;
+      border-color: #2d7052;
+      background: #faf6f0;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #2d7052;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1e5a3d;
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #2d7052;
+      border: 2px solid #2d7052;
+    }
+
+    .btn-secondary:hover {
+      background: #f5ede0;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(45, 112, 82, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead {
+      background: #2d7052;
+      color: white;
+      position: sticky;
+      top: 0;
+    }
+
+    th {
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      border-right: 1px solid #1e5a3d;
+    }
+
+    th:last-child {
+      border-right: none;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e8dcc8;
+      font-size: 14px;
+    }
+
+    tbody tr {
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #faf6f0;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #faf6f0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(45, 112, 82, 0.1);
+      color: #2d7052;
+    }
+
+    .status-returned {
+      background: rgba(200, 200, 200, 0.1);
+      color: #666;
+    }
+
+    .status-overdue {
+      background: rgba(220, 100, 100, 0.1);
+      color: #dc6464;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-edit {
+      background: #4a90e2;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background: #357abd;
+    }
+
+    .btn-delete {
+      background: #dc6464;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #c53d3d;
+    }
+
+    .btn-approve {
+      background: #2d7052;
+      color: white;
+    }
+
+    .btn-approve:hover {
+      background: #1e5a3d;
+    }
+
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #2d7052;
+      box-shadow: 0 4px 12px rgba(45, 112, 82, 0.1);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #8b7d6b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      color: #2d7052;
+      font-weight: 700;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    select {
+      padding: 10px 12px;
+      border: 2px solid #e8dcc8;
+      border-radius: 8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      background: white;
+      color: #333;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #2d7052;
+      background: #faf6f0;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="breadcrumb">
+      <a href="Opening.html">Home</a> &gt;
+      <a href="Choose.html">Role Selection</a> &gt;
+      <span>Admin - Borrow Management</span>
+    </div>
+    <a href="Choose.html" class="back-btn">← Go Back</a>
+  </div>
+
+  <div class="container">
+    <h1>📦 Borrow Management</h1>
+    <p class="subtitle">Manage all borrowed items and requests</p>
+
+    <div class="stats-section">
+      <div class="stat-card">
+        <div class="stat-label">Total Items</div>
+        <div class="stat-value">24</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Currently Borrowed</div>
+        <div class="stat-value">18</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Returned</div>
+        <div class="stat-value">6</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Overdue</div>
+        <div class="stat-value">2</div>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <input type="text" class="search-box" placeholder="🔍 Search by item name, borrower, or ID...">
+      <div class="btn-group">
+        <button class="btn btn-primary">➕ Add Item</button>
+        <button class="btn btn-secondary">📥 Import</button>
+        <button class="btn btn-secondary">📤 Export</button>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="stat-card">
+          <div class="stat-label">Total Items</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Currently Borrowed</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Returned</div>
+          <div class="stat-value">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Overdue</div>
+          <div class="stat-value">0</div>
+        </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Item ID</th>
+            <th>Item Name</th>
+            <th>Borrower</th>
+            <th>Category</th>
+            <th>Borrow Date</th>
+            <th>Return Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="idle-overlay" id="idleOverlay">
+    <div class="idle-popup">
+      <p>Are you still there?</p>
+      <p class="countdown" id="idleCountdown">Going back to Loading Screen in 30</p>
+      <div class="idle-actions">
+        <button class="idle-btn" id="idleYesBtn">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const idleOverlay = document.getElementById('idleOverlay');
+    const idleYesBtn = document.getElementById('idleYesBtn');
+    const idleCountdown = document.getElementById('idleCountdown');
+    const idleMs = 30000;
+    const redirectSeconds = 30;
+    let idleTimer;
+    let redirectTimer;
+    let countdownTimer;
+    let secondsLeft = redirectSeconds;
+
+    function resetIdleTimers() {
+      clearTimeout(idleTimer);
+      clearTimeout(redirectTimer);
+      clearInterval(countdownTimer);
+      idleOverlay.style.display = 'none';
+      secondsLeft = redirectSeconds;
+      idleCountdown.textContent = `Going back to Loading Screen in ${secondsLeft}`;
+      idleTimer = setTimeout(() => {
+        idleOverlay.style.display = 'flex';
+        startCountdown();
+      }, idleMs);
+      redirectTimer = setTimeout(() => {
+        window.location.href = 'Opening.html';
+      }, idleMs + redirectSeconds * 1000);
+    }
+
+    function startCountdown() {
+      countdownTimer = setInterval(() => {
+        secondsLeft -= 1;
+        if (secondsLeft <= 0) {
+          clearInterval(countdownTimer);
+          secondsLeft = 0;
+        }
+        idleCountdown.textContent = `Going back to Loading Screen in ${secondsLeft}`;
+      }, 1000);
+    }
+
+    function dismissPopup() {
+      idleOverlay.style.display = 'none';
+      clearInterval(countdownTimer);
+      resetIdleTimers();
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach((eventName) => {
+      document.addEventListener(eventName, resetIdleTimers, { passive: true });
+    });
+
+    idleYesBtn.addEventListener('click', dismissPopup);
+    resetIdleTimers();
+  </script>
+</body>
+</html>

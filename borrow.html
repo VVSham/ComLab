@@ -9,8 +9,8 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background: #f5f7fb;
-      color: #222;
+      background: #f5ede0;
+      color: #333;
     }
 
     .page {
@@ -27,13 +27,13 @@
     .image-box {
       width: 240px;
       height: 240px;
-      border: 2px dashed #8fa0b8;
+      border: 2px dashed #d4c5b0;
       border-radius: 16px;
-      background: #eef2f7;
+      background: #faf6f0;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #5d6b84;
+      color: #8b7d6b;
       font-size: 16px;
       text-align: center;
       padding: 16px;
@@ -49,6 +49,149 @@
     h1 {
       margin-top: 0;
       font-size: 32px;
+      color: #2d7052;
+    }
+
+    .form-section {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(45, 112, 82, 0.1);
+      margin: 20px 0;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d7052;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e8dcc8;
+      border-radius: 8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 14px;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #2d7052;
+      background: #faf6f0;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .submit-btn {
+      background: #2d7052;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    .submit-btn:hover {
+      background: #1e5a3d;
+    }
+
+    .items-section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      color: #2d7052;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: "📦";
+      font-size: 20px;
+    }
+
+    .item-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border-left: 4px solid #2d7052;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .item-info h3 {
+      margin: 0 0 4px 0;
+      color: #2d7052;
+      font-size: 16px;
+    }
+
+    .item-info p {
+      margin: 2px 0;
+      font-size: 13px;
+      color: #8b7d6b;
+    }
+
+    .item-status {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(45, 112, 82, 0.1);
+      color: #2d7052;
+    }
+
+    .status-returned {
+      background: rgba(200, 200, 200, 0.1);
+      color: #666;
+    }
+
+    .return-btn {
+      background: #2d7052;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .return-btn:hover {
+      background: #1e5a3d;
     }
 
     .top-bar {
@@ -69,8 +212,14 @@
     }
 
     .breadcrumb a {
-      color: #4f6ef7;
+      color: #2d7052;
       text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .breadcrumb a:hover {
+      color: #1e5a3d;
     }
 
     .breadcrumb a:hover {
@@ -80,24 +229,25 @@
     .back-btn {
       display: inline-block;
       padding: 10px 16px;
-      background: #4f6ef7;
+      background: #2d7052;
       color: white;
       text-decoration: none;
       border-radius: 8px;
       font-weight: 600;
+      transition: background 0.3s ease;
     }
 
     .back-btn:hover {
-      background: #3756c9;
+      background: #1e5a3d;
     }
   </style>
 </head>
 <body>
   <div class="top-bar">
     <div class="breadcrumb">
-      <a href="Opening.html">Desktop</a> &gt;
-      <a href="Choose.html">Choose</a> &gt;
-      <a href="Design.html">Design</a> &gt;
+      <a href="Opening.html">Home</a> &gt;
+      <a href="Choose.html">Role Selection</a> &gt;
+      <a href="Design.html">User Portal</a> &gt;
       <span>Borrow</span>
     </div>
     <a href="Design.html" class="back-btn">← Go Back</a>
@@ -105,12 +255,81 @@
 
   <div class="page">
     <div class="image-box">
-      Square picture placeholder
+      🎁 Items
     </div>
 
     <div class="content">
-      <h1>Borrow</h1>
-      <p>This area can be used for borrow details or related content.</p>
+      <h1>📚 Borrow Items</h1>
+      <p>Manage borrowed equipment and resources</p>
+
+      <div class="form-section">
+        <h2 class="section-title">New Borrow Request</h2>
+        <div class="form-group">
+          <label for="item-name">Item Name</label>
+          <input type="text" id="item-name" placeholder="Enter item name">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="item-category">Category</label>
+            <select id="item-category">
+              <option>Select category</option>
+              <option>Electronics</option>
+              <option>Equipment</option>
+              <option>Books</option>
+              <option>Tools</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="borrow-date">Borrow Date</label>
+            <input type="date" id="borrow-date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="return-date">Expected Return Date</label>
+          <input type="date" id="return-date">
+        </div>
+        <div class="form-group">
+          <label for="reason">Reason for Borrowing</label>
+          <input type="text" id="reason" placeholder="Brief description">
+        </div>
+        <button class="submit-btn">Submit Borrow Request</button>
+      </div>
+
+      <div class="items-section">
+        <h2 class="section-title">Borrowed Items</h2>
+        <div class="item-card">
+          <div class="item-info">
+            <h3>Laptop - Dell XPS</h3>
+            <p>Borrowed: 2026-08-15</p>
+            <p>Return by: 2026-08-25</p>
+          </div>
+          <div class="item-status">
+            <span class="status-badge status-active">✓ Active</span>
+            <button class="return-btn">Return Item</button>
+          </div>
+        </div>
+        <div class="item-card">
+          <div class="item-info">
+            <h3>Projector - Epson EB-X04</h3>
+            <p>Borrowed: 2026-08-10</p>
+            <p>Return by: 2026-08-20</p>
+          </div>
+          <div class="item-status">
+            <span class="status-badge status-active">✓ Active</span>
+            <button class="return-btn">Return Item</button>
+          </div>
+        </div>
+        <div class="item-card">
+          <div class="item-info">
+            <h3>Reference Books - Set A</h3>
+            <p>Borrowed: 2026-08-01</p>
+            <p>Returned: 2026-08-18</p>
+          </div>
+          <div class="item-status">
+            <span class="status-badge status-returned">Returned</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </body>

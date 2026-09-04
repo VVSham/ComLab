@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #2d7052, #1e5a3d);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-container {
+      background: white;
+      color: #333;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 28px;
+      color: #2d7052;
+      margin: 0 0 8px 0;
+      font-weight: 700;
+    }
+
+    .login-subtitle {
+      font-size: 14px;
+      color: #8b7d6b;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #2d7052;
+      margin-bottom: 8px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e8dcc8;
+      border-radius: 8px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    input[type="password"]:focus {
+      outline: none;
+      border-color: #2d7052;
+      background: #faf6f0;
+      box-shadow: 0 0 8px rgba(45, 112, 82, 0.2);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px 24px;
+      background: #2d7052;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: #1e5a3d;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 112, 82, 0.3);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .error-message {
+      background: rgba(220, 100, 100, 0.1);
+      color: #dc6464;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+      border: 1px solid rgba(220, 100, 100, 0.3);
+    }
+
+    .error-message.show {
+      display: block;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #e8dcc8;
+    }
+
+    .back-link a {
+      color: #2d7052;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .back-link a:hover {
+      color: #1e5a3d;
+      text-decoration: underline;
+    }
+
+    .show-password {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .show-password input[type="checkbox"] {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+      accent-color: #2d7052;
+    }
+
+    .show-password label {
+      margin: 0;
+      cursor: pointer;
+      font-weight: 400;
+      color: #666;
+    }
+
+    .idle-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .idle-popup {
+      background: white;
+      color: #222;
+      padding: 24px 28px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: min(90vw, 320px);
+    }
+
+    .idle-popup p {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .idle-popup .countdown {
+      margin: 0 0 16px;
+      font-size: 14px;
+      color: #666;
+    }
+
+    .idle-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .idle-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      background: #2d7052;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-icon">🔐</div>
+      <h1>Admin Login</h1>
+      <p class="login-subtitle">Enter password to access admin dashboard</p>
+    </div>
+
+    <div class="error-message" id="errorMessage">
+      ❌ Incorrect password. Please try again.
+    </div>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          id="password" 
+          placeholder="Enter admin password" 
+          required
+          autofocus
+        >
+        <div class="show-password">
+          <input type="checkbox" id="togglePassword">
+          <label for="togglePassword">Show password</label>
+        </div>
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+
+    <div class="back-link">
+      <a href="Choose.html">← Back to Role Selection</a>
+    </div>
+  </div>
+
+  <div class="idle-overlay" id="idleOverlay">
+    <div class="idle-popup">
+      <p>Are you still there?</p>
+      <p class="countdown" id="idleCountdown">Going back to Loading Screen in 30</p>
+      <div class="idle-actions">
+        <button class="idle-btn" id="idleYesBtn">Yes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const passwordInput = document.getElementById('password');
+    const errorMessage = document.getElementById('errorMessage');
+    const togglePassword = document.getElementById('togglePassword');
+    const correctPassword = 'comlab3';
+
+    // Toggle password visibility
+    togglePassword.addEventListener('change', () => {
+      passwordInput.type = togglePassword.checked ? 'text' : 'password';
+    });
+
+    // Handle login
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      if (passwordInput.value === correctPassword) {
+        // Store login session
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        // Redirect to admin dashboard
+        window.location.href = 'adDesign.html';
+      } else {
+        // Show error
+        errorMessage.classList.add('show');
+        passwordInput.value = '';
+        passwordInput.focus();
+        
+        // Hide error after 3 seconds
+        setTimeout(() => {
+          errorMessage.classList.remove('show');
+        }, 3000);
+      }
+    });
+
+    // Idle timeout logic
+    const idleOverlay = document.getElementById('idleOverlay');
+    const idleYesBtn = document.getElementById('idleYesBtn');
+    const idleCountdown = document.getElementById('idleCountdown');
+    const idleMs = 300000; // 5 minutes
+    const redirectSeconds = 30;
+    let idleTimer;
+    let redirectTimer;
+    let countdownTimer;
+    let secondsLeft = redirectSeconds;
+
+    function resetIdleTimers() {
+      clearTimeout(idleTimer);
+      clearTimeout(redirectTimer);
+      clearInterval(countdownTimer);
+      idleOverlay.style.display = 'none';
+      secondsLeft = redirectSeconds;
+      idleCountdown.textContent = `Going back to Loading Screen in ${secondsLeft}`;
+      idleTimer = setTimeout(() => {
+        idleOverlay.style.display = 'flex';
+        startCountdown();
+      }, idleMs);
+      redirectTimer = setTimeout(() => {
+        window.location.href = 'Opening.html';
+      }, idleMs + redirectSeconds * 1000);
+    }
+
+    function startCountdown() {
+      countdownTimer = setInterval(() => {
+        secondsLeft -= 1;
+        if (secondsLeft <= 0) {
+          clearInterval(countdownTimer);
+          secondsLeft = 0;
+        }
+        idleCountdown.textContent = `Going back to Loading Screen in ${secondsLeft}`;
+      }, 1000);
+    }
+
+    function dismissPopup() {
+      idleOverlay.style.display = 'none';
+      clearInterval(countdownTimer);
+      resetIdleTimers();
+    }
+
+    ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach((eventName) => {
+      document.addEventListener(eventName, resetIdleTimers, { passive: true });
+    });
+
+    idleYesBtn.addEventListener('click', dismissPopup);
+    resetIdleTimers();
+  </script>
+</body>
+</html>
